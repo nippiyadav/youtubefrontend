@@ -8,6 +8,9 @@
 - Add a search bar to filter videos (filteration should be done on - frontend without any additional api calls) ✅
 - Implement a grid layout for better UI ✅
 
+## Warning
+- Don't Use the Load More button, I have not added any functionality for this, if it is working then i wil remove this line
+
 ## Features 1
 - You can Search Video by Entering Text and searching will filter only video which are present here 
 
