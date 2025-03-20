@@ -11,5 +11,5 @@ const  Input = forwardRef<HTMLInputElement,InputProps>(({onchange,...props},ref)
     <input className={` px-4 py-2 w-full ${props.className}`} onChange={(e)=> onchange(e.target.value)} ref={ref} placeholder='Searching...' type='search'/>
   )
 })
-
+Input.displayName = "Input";
 export default Input

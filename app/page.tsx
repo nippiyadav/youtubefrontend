@@ -109,7 +109,7 @@ function Page() {
     // console.log("youtubeVideos:- ", youtubeVideos);
 
     // i will filter on the basis of title, description, channelTitle, and tags etc
-    const filterResult = youtubeVideos.filter((video, index) => {
+    const filterResult = youtubeVideos.filter((video) => {
       const searchterm = searchText.toLowerCase();
       // debugging purpose
       // console.log(video.items.snippet.title.toLowerCase().includes(searchterm));
@@ -123,7 +123,7 @@ function Page() {
 
     // this is being set filter value
     setSearchResult(filterResult);
-  }, [searchText]);
+  },[searchText,youtubeVideos]);
 
 
 
@@ -138,7 +138,7 @@ function Page() {
     console.log("youtubeVideos:- ", youtubeVideos);
 
     // i will filter on the basis of title, description, channelTitle, and tags etc
-    const filterResult = youtubeVideos.filter((video, index) => {
+    const filterResult = youtubeVideos.filter((video) => {
       const searchterm = searchValue.toLowerCase();
       console.log(video.items.snippet.title.toLowerCase().includes(searchterm));
 
@@ -149,7 +149,7 @@ function Page() {
     setSearchResult(filterResult);
   }
 
-  // this function run every time when ever onChange change
+  // this function run every time when ever input value change
   const inputChangingValue = (text: string) => {
     // debugging purpose
     // console.log("text:- ", text);

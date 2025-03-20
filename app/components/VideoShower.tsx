@@ -20,7 +20,7 @@ interface VideoShowerProps {
   views?:number;
 }
 
-function VideoShower({ description, thumbnail, title,image,channelTitle,views,id,duration }: VideoShowerProps) {
+function VideoShower({ thumbnail, title,image,channelTitle,views,id,duration }: VideoShowerProps) {
   return (
     <Link href={`https://www.youtube.com/watch?v=${id}`}>
     <div className='min-[444px]:w-[350px] w-full max-[444px]:h-[330px] h-[310px] rounded-md mb-2 bg-gray-600/50 backdrop-blur-xl p-2 flex justify-between flex-col'>

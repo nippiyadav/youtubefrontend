@@ -1,36 +1,25 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Youtube Like Fronend
 
-## Getting Started
+## Requirements 🚀 😄 ❤️
 
-First, run the development server:
+- Fetch and display a list of YouTube videos ✅
+- Show video thumbnails, titles, and channel names ✅
+- Click on a video to open it in YouTube ✅
+- Add a search bar to filter videos (filteration should be done on - frontend without any additional api calls) ✅
+- Implement a grid layout for better UI ✅
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Features 1
+- You can Search Video by Entering Text and searching will filter only video which are present here 
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+![Logo](https://res.cloudinary.com/dzicgyxpx/image/upload/v1742468205/sgvmdjwb1p6kkuj1xbvj.png)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Features 2
+- When you type in search input box it automatically start filtering on the basis of input or you can use and Enter and Search Button also
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+![Thumnail](https://res.cloudinary.com/dzicgyxpx/image/upload/v1742468206/dmncaqaulzlt1pwndypa.png)
 
-## Learn More
+### Credit
+- I am using API of **[Hitesh Sir](https://freeapi.hashnode.space/api-guide/apireference/getYoutubeVideos)** Website
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Links
+ - Github Repo **[Link](https://github.com/nippiyadav/youtubefrontend)**
