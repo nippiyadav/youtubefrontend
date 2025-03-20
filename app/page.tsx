@@ -1,110 +1,211 @@
 "use client"
-import { MoodsProps } from '@/utils/content'
-import React, { useRef, useState } from 'react'
-import Selection from '@/app/components/Selection'
-import Textarea from '@/app/components/Textarea';
-import Button from '@/app/components/Submit';
-import { XCircle } from 'lucide-react';
-import TodayMood from '@/app/components/TodayMood';
-import { useMoodContextValue } from '@/context/ContextProvider';
+
+import React, { useEffect, useRef, useState } from 'react'
+import VideoShower from '@/app/components/VideoShower';
+import Input from './components/Input';
+import { Search } from 'lucide-react';
+
+// this is the typescript interface
+interface YoutubeVideoProps {
+  items: {
+    id: string;
+    statistics: {
+      viewCount: number;
+      likeCount: number;
+      favoriteCount: number;
+      commentCount: number;
+    }
+    contentDetails: {
+      caption: string;
+      definition: string;
+      dimension: string;
+      duration: string;
+      licensedContent: boolean;
+      projection: string;
+    };
+    snippet: {
+      title: string;
+      categoryId: string;
+      channelId: string;
+      channelTitle: string;
+      defaultAudioLanguage: string;
+      description: string;
+      liveBroadcastContent: string;
+      localised: {
+        description: string;
+        title: string;
+      };
+      thumbnails: {
+        default: {
+          height: number;
+          url: string;
+          width: number;
+        };
+        high: {
+          height: number;
+          url: string;
+          width: number;
+        };
+        medium: {
+          height: number;
+          url: string;
+          width: number;
+        }
+      };
+      tags: string[];
+      id: string;
+      kind: string;
+    };
+    kind: string;
+  }
+}
 
 function Page() {
-  // this is context which are holding value
-  const {moodValue,setMoodValue} = useMoodContextValue();
+  const [youtubeVideos, setYoutubeVideos] = useState<YoutubeVideoProps[]>([]);
 
-  // this is for the getting value of selection, we can use simply but we are using like this for that we can reuse this as many time as want
-  const selectionRef = useRef<HTMLSelectElement>(null);
+  // searching result holding because i do not want to change directly in youtubeVideos
+  const [searchResult, setSearchResult] = useState<YoutubeVideoProps[]>([]);
 
-  // this is for the getting value of textarea value
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  // searching text
+  const [searchText, setSearchText] = useState<string>("");
 
-  // this is for the setting error 
-  const [error, setError] = useState<string>("");
+  // i am inserting ref for getting scrollheight of div
+  const resultRef = useRef<HTMLDivElement>(null);
 
-  // this is for opening the form
-  const [openForm, setOpenForm] = useState<boolean>(false);
+  // i am inserting ref for getting scrollheight of div
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const moodFormSubmission = () => {
-    const selectionMood = selectionRef.current?.value;
-    const textareaText = textareaRef.current?.value;
-    const filterEmoji = MoodsProps.filter((data,index)=> data.name===selectionMood);
+  // video fetching youtube
+  useEffect(() => {
+    const youtubeVideoFetching = async () => {
+      const url = 'https://api.freeapi.app/api/v1/public/youtube/videos?page=2&limit=20&query=javascript&sortBy=keep%2520one%253A%2520mostLiked%2520%257C%2520mostViewed%2520%257C%2520latest%2520%257C%2520oldest';
+      try {
+        const response = await fetch(url);
+        if (response.ok) {
+          const data = await response.json();
+          // debugging purpose
+          console.log(data.data.data);
+          setYoutubeVideos(data.data.data);
+          setSearchResult(data.data.data);
+        }
+      } catch (error) {
+        console.error(`Error in fetching from url:- ${url}`, error);
+      }
+    }
+    youtubeVideoFetching();
+  }, []);
 
-    console.log("SelectionMood:- ", selectionMood, "\n", "textareaText:- ", textareaText);
 
-    // this is the cheker for the selectionmood and textareaText
-    if (!selectionMood?.trim() || !textareaText?.trim()) {
-      setError("Please fill the form correctly")
+  // running whenever change in searchinputbox
+  useEffect(() => {
+    // debbuging purpose
+    // console.log("searchResult:- ", searchText);
+    // if there is not search text then it will return and not run of further methods
+    if (!searchText?.trim()) {
       return
-    }
+    };
 
-    // i am making object with the value
-    const newMoodValue = {
-      mood: {
-        name: selectionMood,
-        emoji: filterEmoji[0].emoji
-      },
-      description: textareaText,
-      date: new Date().toString()
-    }
+    // debugging purpose
+    // console.log("youtubeVideos:- ", youtubeVideos);
 
-    // this is the value is being sent 
-    setMoodValue((prev)=>{
-      return [newMoodValue,...prev]
-    })
+    // i will filter on the basis of title, description, channelTitle, and tags etc
+    const filterResult = youtubeVideos.filter((video, index) => {
+      const searchterm = searchText.toLowerCase();
+      // debugging purpose
+      // console.log(video.items.snippet.title.toLowerCase().includes(searchterm));
 
-    if (textareaRef.current?.value) {
-      textareaRef.current.value="";
-      setOpenForm(false)
-    }
+      // this is long condition i am implimenting includes in string and array, and include run on all array element, this is use for subString and case sensitive
+      return video.items.snippet.title.toLowerCase().includes(searchterm) || video.items.snippet.description.toLowerCase().includes(searchterm) || video.items.snippet.channelTitle.toLowerCase().includes(searchterm) || video.items.snippet.tags?.includes(searchterm)
+    });
 
+    // debugging purpose
+    // console.log("filterResult:- ", filterResult);
+
+    // this is being set filter value
+    setSearchResult(filterResult);
+  }, [searchText]);
+
+
+
+  // searching function manually
+  const searchingForm = () => {
+    const searchValue = inputRef.current?.value;
+    console.log("searchValue:- ", searchValue);
+    if (!searchValue?.trim()) {
+      return
+    };
+
+    console.log("youtubeVideos:- ", youtubeVideos);
+
+    // i will filter on the basis of title, description, channelTitle, and tags etc
+    const filterResult = youtubeVideos.filter((video, index) => {
+      const searchterm = searchValue.toLowerCase();
+      console.log(video.items.snippet.title.toLowerCase().includes(searchterm));
+
+      return video.items.snippet.title.toLowerCase().includes(searchterm) || video.items.snippet.description.toLowerCase().includes(searchterm) || video.items.snippet.channelTitle.toLowerCase().includes(searchterm) || video.items.snippet.tags?.includes(searchterm)
+    });
+
+    console.log("filterResult:- ", filterResult);
+    setSearchResult(filterResult);
+  }
+
+  // this function run every time when ever onChange change
+  const inputChangingValue = (text: string) => {
+    // debugging purpose
+    // console.log("text:- ", text);
+    setSearchText(text)
   }
 
   return (
-    <main>
-      {/* mood adder */}
-      <div className='bg-gray-400 p-2 rounded-md w-[95%] mx-auto'>
-        <div>
-          <h1 className='text-center font-bold text-4xl'>Mood Tracker</h1>
-          {/* this is for adding mood of user */}
-          <div>
-            <div className='bg-pink-500 w-15 h-15  flex justify-center items-center font-bold rounded-full leading-20 shadow-md cursor-pointer scale-100 active:scale-95' onClick={() => setOpenForm(true)}>
-              <span className='text-white select-none text-3xl'>+</span>
-            </div>
-
-            {/* moods emoji */}
-            <div className='flex gap-5 my-4 overflow-x-auto'>
-              {MoodsProps.map((data, index) => (
-                <div key={index}>
-                  <div className='flex flex-col justify-center items-center'>
-                    <span className='w-20 h-20 rounded-md text-6xl'>{data.emoji}</span>
-                    <span className='text-xl font-bold'>{data.name}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* mood of emoji insert */}
-            <div className={`w-full h-full fixed bg-gray-400/60 flex justify-center items-center top-0 left-0 ${openForm ? "block" : "hidden"}`}>
-              <form onSubmit={(e) => {
-                e.preventDefault();
-                moodFormSubmission();
-              }} className='flex flex-col gap-4 w-[444px] bg-red-400 p-4 rounded-md shadow-md relative'>
-                <XCircle className='absolute right-[-10] top-[-10] scale-100 focus:scale-105 cursor-pointer' fill='red' scale={2} onClick={() => setOpenForm(false)} />
-                <h1 className='font-bold text-center text-xl'>Mood Form Submission</h1>
-                <Selection ref={selectionRef} />
-                <Textarea ref={textareaRef} />
-                <Button />
-              </form>
-            </div>
-
-          </div>
-        </div>
+    <div>
+      {/* this is for searching features */}
+      <div className='lg:w-[444px] mx-auto w-full p-2'>
+        <form className='flex bg-gray-700 p-2 rounded-full gap-2' onSubmit={(e) => {
+          e.preventDefault();
+          searchingForm();
+        }}>
+          <Input onchange={(e) => inputChangingValue(e)} className='rounded-full text-white outline-none bg-gray-900 focus:ring-1 ring-blue-400 flex-1' ref={inputRef} />
+          <button type='submit' className=' rounded-full px-4 py-2 flex justify-center items-center cursor-pointer '>
+            <Search color='white' size={25} />
+          </button>
+        </form>
       </div>
 
-      {/* todayMood Components */}
-      <TodayMood />
+      {/* result search */}
+      <div ref={resultRef} className='flex flex-col gap-1 p-2'>
+        {searchResult.length > 0 ?
+          (<>
+            <div className='flex flex-wrap gap-2 p-2 justify-center'>
+              {searchResult.map((video, index) => (
+                <VideoShower
+                  id={video.items.id}
+                  key={index}
+                  description={video.items.snippet.description}
+                  title={video.items.snippet.title} thumbnail={video.items.snippet.thumbnails.high}
+                  channelTitle={video.items.snippet.channelTitle}
+                  views={video.items.statistics.viewCount}
+                  duration={video.items.contentDetails.duration}
+                />
+              ))}
+            </div>
+            
+            {/* this is the load More button jsx */}
+              <div className='flex items-center justify-center'>
+                <span className='font-bold rounded-md px-4 py-2 shadow-md bg-white cursor-pointer'>Load More</span>
+              </div>
+          </>)
+          :
+          (<div className='flex flex-wrap justify-center gap-2 p-2'>
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((data, index) => (
+              <div key={index} className='flex flex-wrap gap-2 p-2 justify-center'>
+                <div className='w-[320px] h-[310px] bg-gray-400/30 backdrop-blur-xl rounded-md'>
 
-    </main>
+                </div>
+              </div>
+            ))}
+          </div>)}
+      </div>
+    </div>
   )
 }
 
